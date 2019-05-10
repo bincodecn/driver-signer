@@ -51,8 +51,9 @@ int HookSomeAPI()
             MH_EnableHook(CertVerifyTimeValidity);
 }
 
-BOOL SignDriver(LPVOID PfxBuffer, DWORD PfxBufferSize, LPWSTR Password, LPWSTR InputFile)
+int SignDriver(LPVOID PfxBuffer, DWORD PfxBufferSize, LPWSTR Password, LPWSTR InputFile)
 {
+    int Result = -1;
 	CRYPT_DATA_BLOB PfxBlob;
 	HCERTSTORE CertStore;
 	PCCERT_CONTEXT CertContext;
@@ -98,12 +99,14 @@ BOOL SignDriver(LPVOID PfxBuffer, DWORD PfxBufferSize, LPWSTR Password, LPWSTR I
         goto CLEAN;
     }
 
+    Result = 0;
+
 CLEAN:
     if (CertContext)
         CertFreeCertificateContext(CertContext);
     if (CertStore)
         CertCloseStore(CertStore, 0);
-	return TRUE;
+	return Result;
 }
 
 VOID PrintUsage()
@@ -194,11 +197,11 @@ int wmain(int wargc, LPWSTR wargv[])
     fread(PfxBuffer, st.st_size, 1, ifp);
     fclose(ifp);
 
-    SignDriver(PfxBuffer, st.st_size, Password, InputFile);
+    int ret = SignDriver(PfxBuffer, st.st_size, Password, InputFile);
 
     free(PfxBuffer);
 
-	return 0;
+	return ret;
 }
 
 int main(int argc, const char *argv[])
