@@ -18,20 +18,20 @@ CertVerifyTimeValidity_t CertVerifyTimeValidityOrigin = NULL;
 
 void WINAPI GetSystemTimeHook(LPSYSTEMTIME lpSystemTime)
 {
-    printf("GetSystemTimeHook\n");
+    //printf("GetSystemTimeHook\n");
     GetSystemTimeOrigin(lpSystemTime);
     lpSystemTime->wYear = 2011;
 }
 
 void WINAPI GetLocalTimeHook(LPSYSTEMTIME lpSystemTime)
 {
-    printf("GetLocalTimeHook\n");
+    //printf("GetLocalTimeHook\n");
     GetLocalTimeOrigin(lpSystemTime);
     lpSystemTime->wYear = 2011;
 }
 
 LONG WINAPI CertVerifyTimeValidityHook(LPFILETIME pTimeToVerify, PCERT_INFO pCertInfo) {
-    printf("CertVerifyTimeValidityHook\n");
+    //printf("CertVerifyTimeValidityHook\n");
     return 0;
 }
 
