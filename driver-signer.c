@@ -55,20 +55,17 @@ int SignDriver(LPVOID PfxBuffer, DWORD PfxBufferSize, LPWSTR Password, LPWSTR In
 {
     int Result = -1;
 	CRYPT_DATA_BLOB PfxBlob;
-	HCERTSTORE CertStore;
-	PCCERT_CONTEXT CertContext;
+	HCERTSTORE CertStore = NULL;
+	PCCERT_CONTEXT CertContext = NULL;
 	CRYPTUI_WIZ_DIGITAL_SIGN_INFO SignInfo;
 	CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO SignExtInfo;
-	DWORD key_size;
-	PCRYPT_KEY_PROV_INFO key;
-	HCRYPTPROV provider;
 
 	PfxBlob.cbData = PfxBufferSize;
 	PfxBlob.pbData = PfxBuffer;
 	CertStore = PFXImportCertStore(&PfxBlob, Password, 0);
 
 	if (!CertStore) {
-		printf("Failed to import pfx %x\n", GetLastError());
+		printf("Failed to import pfx 0x%lx\n", GetLastError());
         goto CLEAN;
     }
 
@@ -95,7 +92,7 @@ int SignDriver(LPVOID PfxBuffer, DWORD PfxBufferSize, LPWSTR Password, LPWSTR In
 	SignExtInfo.hAdditionalCertStore = CertStore;
 
     if (!CryptUIWizDigitalSign(CRYPTUI_WIZ_NO_UI, NULL, NULL, &SignInfo, NULL)) {
-        printf("Failed to sign driver %x\n", GetLastError());
+        printf("Failed to sign driver 0x%lx\n", GetLastError());
         goto CLEAN;
     }
 
@@ -116,7 +113,7 @@ VOID PrintUsage()
     printf("-f input.pfx\tthe pfx file. required");
 }
 
-int wmain(int wargc, LPWSTR wargv[])
+int w_main(int wargc, LPWSTR wargv[])
 {
     int wargi = 1;
     WCHAR PasswordBuffer[128];
@@ -173,9 +170,9 @@ int wmain(int wargc, LPWSTR wargv[])
         exit(-1);
     }
 
-    struct stat st;
+    struct _stat st;
 
-    if (wstat(PfxFile, &st)) {
+    if (_wstat(PfxFile, &st)) {
         printf("Can not access pfx file\n");
         return -1;
     }
@@ -208,5 +205,5 @@ int main(int argc, const char *argv[])
 {
     int wargc = 0;
     LPWSTR* wargv = CommandLineToArgvW(GetCommandLineW(), &wargc);
-    return wmain(wargc, wargv);
+    return w_main(wargc, wargv);
 }
